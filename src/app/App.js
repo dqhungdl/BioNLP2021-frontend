@@ -1,8 +1,6 @@
 import React from 'react';
 import {withStyles} from '@material-ui/core/styles';
-import Raleway from '../static/raleway-vietnamese.woff2';
 import header from '../static/header.png';
-import background from '../static/background.jpg';
 import Input from "../input/Input";
 import Output from "../output/Output";
 import "./App.css";
@@ -12,9 +10,13 @@ import {
     Link,
     Paper,
     Typography,
-    ThemeProvider,
-    Divider
+    ThemeProvider, Divider
 } from "@material-ui/core";
+import Grid from "@material-ui/core/Grid";
+import SchoolIcon from '@material-ui/icons/School';
+import LocationOnIcon from '@material-ui/icons/LocationOn';
+import PeopleIcon from '@material-ui/icons/People';
+import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
 
 const theme = createMuiTheme({
     typography: {
@@ -24,7 +26,8 @@ const theme = createMuiTheme({
 
 function Copyright() {
     return (
-        <Typography variant="body1" color="textSecondary" align="center" style={{backgroundColor: "#808080"}}>
+        <Typography variant="body1" color="textSecondary" align="center"
+                    style={{color: "white", backgroundColor: "#181a1b"}}>
             <b>
                 {'Copyright © '}
                 <Link color="inherit" href="https://github.com/dqhungdl/BioNLP2021">
@@ -42,19 +45,17 @@ const styles = theme => ({
         padding: theme.spacing(8, 0, 6),
     },
     footer: {
-        backgroundColor: theme.palette.background.paper,
+        backgroundColor: "#292c2f",
         padding: theme.spacing(1),
     },
     background: {
-        backgroundImage: `url(${background})`,
+        backgroundColor: "#e6e6e6",
         backgroundSize: "100%",
         backgroundRepeat: "no-repeat",
         backgroundAttachment: "fixed"
     },
     headerBackground: {
         backgroundImage: `url(${header})`,
-        borderBottomLeftRadius: 8,
-        borderBottomRightRadius: 8
     },
     whiteTypography: {
         color: "white"
@@ -98,14 +99,9 @@ class App extends React.Component {
         const {classes} = this.props;
         return (
             <ThemeProvider theme={theme}>
-                <Container maxWidth='xl' className={classes.background}>
-                    {/*style={{*/}
-                    {/*    backgroundImage: `url(${background})`,*/}
-                    {/*    backgroundRepeat: "no-repeat",*/}
-                    {/*    backgroundAttachment: "fixed"*/}
-                    {/*}}>*/}
+                <Container maxWidth='xl' className={classes.background} style={{padding: 0}}>
                     {/*Header*/}
-                    <Container maxWidth="lg" className={classes.headerBackground}>
+                    <Container maxWidth='xl' className={classes.headerBackground} style={{padding: 0}}>
                         <Container maxWidth="sm" component="main" className={classes.heroContent}>
                             <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom
                                         className={classes.whiteTypography}>
@@ -121,7 +117,7 @@ class App extends React.Component {
                     <Container maxWidth="lg">
                         <Paper elevation={10} className={classes.bodyPaper}>
                             <br/>
-                            <Container maxWidth="md">
+                            <Container maxWidth="md" style={{padding: 0}}>
                                 {
                                     this.state.showInput &&
                                     <Input toOutput={this.toOutput}/>
@@ -140,17 +136,68 @@ class App extends React.Component {
 
                 {/*Footer*/}
                 <footer className={classes.footer}>
-                    <Typography variant="h6" align="center" gutterBottom>
-                        Đại học Công nghệ - Đại học quốc gia Hà Nội<br/>
-                        Khoa Công nghệ thông tin
-                    </Typography>
-                    <Divider variant="inset"/>
-                    <Typography variant="subtitle1" align="center" color="textSecondary" component="p">
-                        Tác giả: Nguyễn Quốc An, Dương Quốc Hưng, Nguyễn Huy Sơn, Nguyễn Minh Quang
-                    </Typography>
-                    <Typography variant="subtitle1" align="center" color="textSecondary" component="p">
-                        Giáo viên hướng dẫn: Lê Hoàng Quỳnh, Cấn Duy Cát
-                    </Typography>
+                    <Grid container spacing={3} justify="center">
+                        <Grid item xs={3}>
+                            <Paper elevation={0} className={classes.footer}>
+                                <Grid container align="center" justify="center" direction="column">
+                                    <Grid item>
+                                        <Typography variant='h6' className={classes.whiteTypography}>
+                                            <PeopleIcon/><br/>
+                                            <b>Tác giả</b>
+                                        </Typography>
+                                        <Typography className={classes.whiteTypography}>
+                                            Nguyễn Quốc An<br/>
+                                            Dương Quốc Hưng<br/>
+                                            Nguyễn Huy Sơn<br/>
+                                            Nguyễn Minh Quang
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
+                            </Paper>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <Paper elevation={0} className={classes.footer}>
+                                <Grid container spacing={3} align="center" justify="center" direction="column">
+                                    <Grid item xs={12}>
+                                        <Typography className={classes.whiteTypography}>
+                                            <SchoolIcon/>
+                                        </Typography>
+                                        <Typography variant="h6" className={classes.whiteTypography}>
+                                            <b>Đại học Công nghệ - Đại học quốc gia Hà Nội</b>
+                                        </Typography>
+                                        <Typography className={classes.whiteTypography}>
+                                            Khoa Công nghệ thông tin
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <Typography className={classes.whiteTypography}>
+                                            <LocationOnIcon/>
+                                        </Typography>
+                                        <Typography className={classes.whiteTypography}>
+                                            144 Xuân Thủy, Dịch Vọng Hậu, Cầu Giấy, Hà Nội, Việt Nam
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
+                            </Paper>
+                        </Grid>
+                        <Divider orientation="vertical"/>
+                        <Grid item xs={3}>
+                            <Paper elevation={0} className={classes.footer}>
+                                <Grid container spacing={3} align="center" justify="center" direction="column">
+                                    <Grid item>
+                                        <Typography variant='h6' className={classes.whiteTypography}>
+                                            <SupervisorAccountIcon/><br/>
+                                            <b>Giáo viên hướng dẫn</b>
+                                        </Typography>
+                                        <Typography className={classes.whiteTypography}>
+                                            MSc. Cấn Duy Cát<br/>
+                                            MSc. Lê Hoàng Quỳnh
+                                        </Typography>
+                                    </Grid>
+                                </Grid>
+                            </Paper>
+                        </Grid>
+                    </Grid>
                 </footer>
                 <Copyright/>
             </ThemeProvider>

@@ -1,16 +1,19 @@
 import React from 'react';
 import Grid from '@material-ui/core/Grid';
 import {withStyles} from '@material-ui/styles';
-import {Box, Button, Divider, Fab, Snackbar, Tooltip, Typography, Backdrop} from "@material-ui/core";
+import {Box, Button, Divider, Fab, Snackbar, Tooltip, Typography, Backdrop, Container} from "@material-ui/core";
 import {VpnKeyTwoTone} from "@material-ui/icons";
 import SendIcon from '@material-ui/icons/Send';
 import AddIcon from '@material-ui/icons/Add';
 import DescriptionIcon from '@material-ui/icons/Description';
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import DocumentsList from "./DocumentsList";
 import ChipInput from "material-ui-chip-input";
 import {Alert, AlertTitle} from "@material-ui/lab";
 import axios from "axios";
+import Card from '@material-ui/core/Card';
+import CardContent from "@material-ui/core/CardContent";
 
 const styles = theme => ({
     backdrop: {
@@ -39,6 +42,24 @@ const styles = theme => ({
         '&:hover': {
             backgroundColor: "#3e8e3e",
         }
+    },
+    uploadFileFab: {
+        position: 'fixed',
+        bottom: 30,
+        right: 155
+    },
+    documentsList: {
+        display: "flex",
+        justifyContent: 'space-between',
+        padding: 0
+    },
+    uploadIcon: {
+        marginTop: 7,
+        marginBottom: 7,
+        paddingRight: 15
+    },
+    input: {
+        display: 'none'
     }
 });
 
@@ -52,6 +73,7 @@ class Input extends React.Component {
             documentErrors: [false],
             showMaxLengthAlert: false,
             showServerErrorAlert: false,
+            showInputValidationAlert: false,
             loading: false,
             disableAddDocument: false
         };
@@ -130,6 +152,12 @@ class Input extends React.Component {
         });
     }
 
+    onCloseInputValidationAlert() {
+        this.setState({
+            showInputValidationAlert: false
+        });
+    }
+
     submit(callback) {
         let validKeyword = this.state.keywords.length > 0;
         let validDocument = true;
@@ -179,6 +207,35 @@ class Input extends React.Component {
                     showServerErrorAlert: true
                 });
             });
+        } else {
+            this.setState({
+                showInputValidationAlert: true
+            });
+        }
+    }
+
+    readUploadFiles(file) {
+        return new Promise((resolve, reject) => {
+            let fileReader = new FileReader();
+            fileReader.readAsText(file);
+            fileReader.onload = () => {
+                resolve(fileReader.result);
+            }
+            fileReader.onerror = reject;
+        });
+    }
+
+    async uploadFiles(event) {
+        try {
+            let documents = [];
+            for (let i = 0; i < event.target.files.length; i++)
+                documents.push(await this.readUploadFiles(event.target.files[i]));
+            console.log(documents.length);
+            this.setState({
+                documents: documents
+            });
+        } catch (error) {
+            console.log(error);
         }
     }
 
@@ -186,62 +243,95 @@ class Input extends React.Component {
         const {classes} = this.props;
         return (
             <React.Fragment>
-                {/*Keywords*/}
-                <Typography variant="h4" gutterBottom>
-                    <VpnKeyTwoTone/> <b>Từ khóa tìm kiếm</b>
-                </Typography>
-                <Grid container spacing={3}>
-                    <Grid item xs={12}>
-                        <ChipInput
-                            error={this.state.keywordError}
-                            required
-                            fullWidth
-                            label="Danh sách từ khóa"
-                            helperText={
-                                <>
-                                    Danh sách có ít nhất <b>1</b> từ khóa, cách nhau bởi dấu <b>ENTER</b>.<br/>
-                                    Độ dài <b>tối đa</b> của từ khóa là <b>50</b>.
-                                </>
-                            }
-                            variant="outlined"
-                            value={this.state.keywords}
-                            onAdd={chip => this.addKeyword(chip)}
-                            onDelete={index => this.deleteKeyword(index)}
-                            onBeforeAdd={chip => this.beforeAddKeyword(chip)}
-                        />
-                    </Grid>
-                </Grid>
-                <br/><br/>
+                <Card elevation={0}>
+                    <CardContent>
+                        <Typography variant="h4" gutterBottom>
+                            <VpnKeyTwoTone/> <b>Từ khóa tìm kiếm</b>
+                        </Typography>
+                        <Grid container spacing={3}>
+                            <Grid item xs={12}>
+                                <ChipInput
+                                    error={this.state.keywordError}
+                                    required
+                                    fullWidth
+                                    label="Danh sách từ khóa"
+                                    helperText={
+                                        <>
+                                            Danh sách có ít nhất <b>1</b> từ khóa, cách nhau bởi dấu <b>ENTER</b>.<br/>
+                                            Độ dài <b>tối đa</b> của từ khóa là <b>50</b>.
+                                        </>
+                                    }
+                                    variant="outlined"
+                                    value={this.state.keywords}
+                                    onAdd={chip => this.addKeyword(chip)}
+                                    onDelete={index => this.deleteKeyword(index)}
+                                    onBeforeAdd={chip => this.beforeAddKeyword(chip)}
+                                />
+                            </Grid>
+                        </Grid>
+                    </CardContent>
+                </Card>
+                <br/>
                 <Divider variant="middle"/><br/>
 
                 {/*Documents*/}
-                <Typography variant="h4" gutterBottom>
-                    <DescriptionIcon/> <b>Danh sách các văn bản</b>
-                </Typography>
-                <Grid container spacing={3}>
-                    <DocumentsList documents={this.state.documents}
-                                   documentErrors={this.state.documentErrors}
-                                   deleteDocument={this.deleteDocument}
-                                   updateDocument={this.updateDocument}/>
-                </Grid>
-                <br/>
+                <Card elevation={0}>
+                    <CardContent>
+                        <Container className={classes.documentsList}>
+                            <Typography variant="h4" gutterBottom>
+                                <DescriptionIcon/> <b>Danh sách các văn bản</b>
+                            </Typography>
+                            <input accept=".txt"
+                                   className={classes.input}
+                                   id="contained-button-file"
+                                   multiple
+                                   type="file"
+                                   onChange={event => this.uploadFiles(event)}
+                            />
+                            <label htmlFor="contained-button-file">
+                                <Button size="large"
+                                        variant="outlined"
+                                        startIcon={<CloudUploadIcon/>}
+                                        className={classes.uploadIcon}
+                                        component="span">
+                                    <b>Đính kèm</b>
+                                </Button>
+                            </label>
+                        </Container>
+                        <Grid container spacing={3}>
+                            <DocumentsList documents={this.state.documents}
+                                           documentErrors={this.state.documentErrors}
+                                           deleteDocument={this.deleteDocument}
+                                           updateDocument={this.updateDocument}/>
+                        </Grid>
+                        <br/>
 
-                {/*Buttons*/}
-                <Box textAlign="right">
-                    <Button size="small" color="primary" onClick={() => this.addDocument()}
-                            startIcon={<AddIcon/>}
-                            disabled={this.state.disableAddDocument}>
-                        <b>Thêm văn bản mới</b>
-                    </Button>
-                </Box>
-                <Box textAlign="center">
-                    <Button size="large" className={classes.submitButton} startIcon={<SendIcon/>}
-                            onClick={() => {
-                                this.submit(this.props.toOutput);
-                            }}>
-                        <b>Tóm tắt</b>
-                    </Button>
-                </Box>
+                        {/*Buttons*/}
+                        <Box textAlign="right">
+                            <Button size="small" color="primary" onClick={() => this.addDocument()}
+                                    startIcon={<AddIcon/>}
+                                    disabled={this.state.disableAddDocument}>
+                                <b>Thêm văn bản mới</b>
+                            </Button>
+                        </Box>
+                        <br/>
+                        <Box textAlign="center">
+                            <Button size="large" className={classes.submitButton} startIcon={<SendIcon/>}
+                                    onClick={() => {
+                                        this.submit(this.props.toOutput);
+                                    }}>
+                                <b>Tóm tắt</b>
+                            </Button>
+                        </Box>
+                    </CardContent>
+                </Card>
+                <label htmlFor="contained-button-file">
+                    <Tooltip title={<b>Đính kèm</b>}>
+                        <Fab size="large" className={classes.uploadFileFab} component="span">
+                            <CloudUploadIcon/>
+                        </Fab>
+                    </Tooltip>
+                </label>
                 <Tooltip title={<b>Thêm văn bản mới</b>}>
                     <Fab color='primary' size="large" className={classes.addDocumentFab}
                          onClick={() => this.addDocument()}
@@ -273,6 +363,14 @@ class Input extends React.Component {
                     <Alert severity="error" onClose={() => this.onCloseServerErrorAlert()}>
                         <AlertTitle><b>Lỗi</b></AlertTitle>
                         Lỗi server
+                    </Alert>
+                </Snackbar>
+                <Snackbar open={this.state.showInputValidationAlert}
+                          autoHideDuration={3000}
+                          onClose={() => this.onCloseInputValidationAlert()}>
+                    <Alert severity="error" onClose={() => this.onCloseInputValidationAlert()}>
+                        <AlertTitle><b>Lỗi</b></AlertTitle>
+                        Lỗi dữ liệu đầu vào
                     </Alert>
                 </Snackbar>
 
