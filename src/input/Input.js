@@ -17,6 +17,29 @@ const styles = theme => ({
         zIndex: theme.zIndex.drawer + 1,
         color: '#fff',
     },
+    submitButton: {
+        alignItems: "center",
+        backgroundColor: "#5cb85c",
+        color: "white",
+        '&:hover': {
+            backgroundColor: "#3e8e3e",
+        }
+    },
+    addDocumentFab: {
+        position: 'fixed',
+        bottom: 30,
+        right: 90
+    },
+    submitFab: {
+        backgroundColor: "#5cb85c",
+        color: "white",
+        position: 'fixed',
+        bottom: 30,
+        right: 25,
+        '&:hover': {
+            backgroundColor: "#3e8e3e",
+        }
+    }
 });
 
 class Input extends React.Component {
@@ -212,34 +235,25 @@ class Input extends React.Component {
                     </Button>
                 </Box>
                 <Box textAlign="center">
-                    <Button size="large" onClick={() => {
-                        this.submit(this.props.toOutput);
-                    }}
-                            style={{
-                                alignItems: "center",
-                                backgroundColor: "#5cb85c", color: "white",
-                            }} startIcon={<SendIcon/>}>
+                    <Button size="large" className={classes.submitButton} startIcon={<SendIcon/>}
+                            onClick={() => {
+                                this.submit(this.props.toOutput);
+                            }}>
                         <b>Tóm tắt</b>
                     </Button>
                 </Box>
                 <Tooltip title={<b>Thêm văn bản mới</b>}>
-                    <Fab color='primary' size="large" onClick={() => this.addDocument()}
-                         style={{
-                             position: 'fixed', bottom: 30, right: 90,
-                         }}
+                    <Fab color='primary' size="large" className={classes.addDocumentFab}
+                         onClick={() => this.addDocument()}
                          disabled={this.state.disableAddDocument}>
                         <AddIcon/>
                     </Fab>
                 </Tooltip>
                 <Tooltip title={<b>Tóm tắt</b>}>
-                    <Fab size="large" onClick={() => {
+                    <Fab size="large" className={classes.submitFab} onClick={() => {
                         this.submit();
                         this.props.toOutput();
-                    }}
-                         style={{
-                             backgroundColor: "#5cb85c", color: "white",
-                             position: 'fixed', bottom: 30, right: 25,
-                         }}>
+                    }}>
                         <SendIcon/>
                     </Fab>
                 </Tooltip>

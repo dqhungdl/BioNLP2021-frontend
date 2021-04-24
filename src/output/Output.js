@@ -5,8 +5,8 @@ import {Box, Button, Container, Divider, Typography} from "@material-ui/core";
 import AccordionList from "./AccordionList";
 import SubjectIcon from '@material-ui/icons/Subject';
 import DescriptionIcon from '@material-ui/icons/Description';
-class Output extends React.Component {
 
+class Output extends React.Component {
     render() {
         return (
             <Container>

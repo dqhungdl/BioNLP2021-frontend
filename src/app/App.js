@@ -5,6 +5,7 @@ import header from '../static/header.png';
 import background from '../static/background.jpg';
 import Input from "../input/Input";
 import Output from "../output/Output";
+import "./App.css";
 import {
     Container,
     createMuiTheme,
@@ -15,31 +16,10 @@ import {
     Divider
 } from "@material-ui/core";
 
-const raleway = {
-    fontFamily: 'Raleway',
-    fontStyle: 'normal',
-    fontDisplay: 'swap',
-    fontWeight: 400,
-    src: `
-    local('Raleway'),
-    local('Raleway-Regular'),
-    url(${Raleway}) format('woff2')
-  `,
-    unicodeRange:
-        'U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF',
-};
-
 const theme = createMuiTheme({
     typography: {
-        fontFamily: 'Raleway, Arial',
-    },
-    overrides: {
-        MuiCssBaseline: {
-            '@global': {
-                '@font-face': [raleway],
-            },
-        },
-    },
+        fontFamily: "'Open Sans', sans-serif"
+    }
 });
 
 function Copyright() {
@@ -65,10 +45,23 @@ const styles = theme => ({
         backgroundColor: theme.palette.background.paper,
         padding: theme.spacing(1),
     },
-    headerBackground: {
+    background: {
         backgroundImage: `url(${background})`,
+        backgroundSize: "100%",
         backgroundRepeat: "no-repeat",
         backgroundAttachment: "fixed"
+    },
+    headerBackground: {
+        backgroundImage: `url(${header})`,
+        borderBottomLeftRadius: 8,
+        borderBottomRightRadius: 8
+    },
+    whiteTypography: {
+        color: "white"
+    },
+    bodyPaper: {
+        position: "relative",
+        top: -30
     }
 });
 
@@ -105,35 +98,28 @@ class App extends React.Component {
         const {classes} = this.props;
         return (
             <ThemeProvider theme={theme}>
-                <Container maxWidth='xl' className={classes.headerBackground}>
-                           {/*style={{*/}
-                           {/*    backgroundImage: `url(${background})`,*/}
-                           {/*    backgroundRepeat: "no-repeat",*/}
-                           {/*    backgroundAttachment: "fixed"*/}
-                           {/*}}>*/}
+                <Container maxWidth='xl' className={classes.background}>
+                    {/*style={{*/}
+                    {/*    backgroundImage: `url(${background})`,*/}
+                    {/*    backgroundRepeat: "no-repeat",*/}
+                    {/*    backgroundAttachment: "fixed"*/}
+                    {/*}}>*/}
                     {/*Header*/}
-                    <Container maxWidth="lg" style={{
-                        backgroundImage: `url(${header})`,
-                        borderBottomLeftRadius: 8,
-                        borderBottomRightRadius: 8
-                    }}>
+                    <Container maxWidth="lg" className={classes.headerBackground}>
                         <Container maxWidth="sm" component="main" className={classes.heroContent}>
                             <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom
-                                        style={{color: "white"}}>
+                                        className={classes.whiteTypography}>
                                 <b>Hệ thống tóm tắt <br/>đa văn bản</b>
                             </Typography>
                             <Typography variant="h5" align="center" color="textSecondary" component="p"
-                                        style={{color: "white"}}>
+                                        className={classes.whiteTypography}>
                                 Tóm tắt đa văn bản dựa vào câu hỏi cho dữ liệu <br/>Tiếng Việt
                             </Typography>
                         </Container>
                     </Container>
                     {/*Body*/}
                     <Container maxWidth="lg">
-                        <Paper elevation={10} style={{
-                            position: "relative",
-                            top: -30
-                        }}>
+                        <Paper elevation={10} className={classes.bodyPaper}>
                             <br/>
                             <Container maxWidth="md">
                                 {
@@ -153,7 +139,7 @@ class App extends React.Component {
                 </Container>
 
                 {/*Footer*/}
-                <footer className={classes.footer} style={{backgroundColor: "white"}}>
+                <footer className={classes.footer}>
                     <Typography variant="h6" align="center" gutterBottom>
                         Đại học Công nghệ - Đại học quốc gia Hà Nội<br/>
                         Khoa Công nghệ thông tin
