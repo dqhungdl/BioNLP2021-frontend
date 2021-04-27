@@ -7,8 +7,14 @@ import Chip from '@material-ui/core/Chip';
 import SubjectIcon from '@material-ui/icons/Subject';
 import DescriptionIcon from '@material-ui/icons/Description';
 import {VpnKeyTwoTone} from "@material-ui/icons";
+import {Remarkable} from "remarkable";
 
 class Output extends React.Component {
+    constructor(props) {
+        super(props);
+        this.markdown = new Remarkable();
+    }
+
     render() {
         return (
             <Container>
@@ -32,8 +38,9 @@ class Output extends React.Component {
                         <Typography gutterBottom variant="h4" component="h2">
                             <SubjectIcon/> <b>Tóm tắt đa văn bản</b>
                         </Typography>
-                        <Typography variant="h6" component="p">
-                            {this.props.response['multi_summ']}
+                        <Typography variant="h6" component="div">
+                            {/*{this.props.response['multi_summ']}*/}
+                            <p dangerouslySetInnerHTML={this.props.response['multi_summ']}/>
                         </Typography>
                     </CardContent>
                 </Card>

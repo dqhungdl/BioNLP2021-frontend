@@ -1,7 +1,7 @@
 import React from 'react';
 import Grid from '@material-ui/core/Grid';
 import {withStyles} from '@material-ui/styles';
-import {Box, Button, Divider, Fab, Snackbar, Tooltip, Typography, Backdrop, Container} from "@material-ui/core";
+import {Backdrop, Box, Button, Container, Divider, Fab, Snackbar, Tooltip, Typography} from "@material-ui/core";
 import {VpnKeyTwoTone} from "@material-ui/icons";
 import SendIcon from '@material-ui/icons/Send';
 import AddIcon from '@material-ui/icons/Add';
@@ -14,6 +14,7 @@ import {Alert, AlertTitle} from "@material-ui/lab";
 import axios from "axios";
 import Card from '@material-ui/core/Card';
 import CardContent from "@material-ui/core/CardContent";
+import {Remarkable} from "remarkable";
 
 const styles = theme => ({
     backdrop: {
@@ -77,6 +78,7 @@ class Input extends React.Component {
             loading: false,
             disableAddDocument: false
         };
+        this.markdown = new Remarkable();
         this.deleteDocument = this.deleteDocument.bind(this);
         this.updateDocument = this.updateDocument.bind(this);
     }
@@ -158,7 +160,21 @@ class Input extends React.Component {
         });
     }
 
-    submit(callback) {
+    getMarkdown(str) {
+        let sentences = str.split('\n');
+        for (let i = 0; i < sentences.length; i++) {
+            sentences[i] = sentences[i].trim();
+            if (sentences[i].startsWith('* ')) {
+                sentences[i] += '\n';
+                continue;
+            }
+            sentences[i] += '\\\n';
+        }
+        let formatStr = sentences.join('');
+        return {__html: this.markdown.render(formatStr)};
+    }
+
+    submit() {
         let validKeyword = this.state.keywords.length > 0;
         let validDocument = true;
         let documentErrors = [];
@@ -183,6 +199,7 @@ class Input extends React.Component {
             this.setState({
                 loading: true
             });
+            console.log("Request:", request);
             axios.post('http://localhost:8000/', request,
                 {
                     headers: {
@@ -193,15 +210,15 @@ class Input extends React.Component {
                     },
                     timeout: 20000
                 }
-            ).then(response => {
-                console.log(response);
+            ).then(async response => {
+                console.log("Response:", response);
                 this.setState({
                     loading: false
                 });
-                request['multi_summ'] = response['data']['multi_summ'];
-                callback(request);
+                request['multi_summ'] = await this.getMarkdown(response['data']['multi_summ']);
+                this.props.toOutput(request);
             }).catch(err => {
-                console.log(err);
+                console.log("Error:", err);
                 this.setState({
                     loading: false,
                     showServerErrorAlert: true
@@ -230,12 +247,11 @@ class Input extends React.Component {
             let documents = [];
             for (let i = 0; i < event.target.files.length; i++)
                 documents.push(await this.readUploadFiles(event.target.files[i]));
-            console.log(documents.length);
             this.setState({
                 documents: documents
             });
         } catch (error) {
-            console.log(error);
+            console.log("Error:", error);
         }
     }
 
@@ -318,7 +334,7 @@ class Input extends React.Component {
                         <Box textAlign="center">
                             <Button size="large" className={classes.submitButton} startIcon={<SendIcon/>}
                                     onClick={() => {
-                                        this.submit(this.props.toOutput);
+                                        this.submit();
                                     }}>
                                 <b>Tóm tắt</b>
                             </Button>

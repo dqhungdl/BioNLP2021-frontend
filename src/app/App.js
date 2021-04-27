@@ -88,10 +88,11 @@ class App extends React.Component {
     toOutput(response) {
         this.setState({
             response: response
-        });
-        this.setState({
-            showInput: false,
-            showOutput: true
+        }, () => {
+            this.setState({
+                showInput: false,
+                showOutput: true
+            });
         });
     }
 
