@@ -14,12 +14,12 @@ class AccordionList extends React.Component {
                         <Accordion key={"document-" + (index + 1).toString()}>
                             <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
                                 <Typography variant="h5">
-                                   <b>{"Văn bản " + (index + 1).toString()}</b>
+                                    <b>{"Văn bản " + (index + 1).toString()}</b>
                                 </Typography>
                             </AccordionSummary>
                             <AccordionDetails>
                                 <Typography variant="h6">
-                                    {value}
+                                    <div key={"document-" + (index + 1).toString()} dangerouslySetInnerHTML={value}/>
                                 </Typography>
                             </AccordionDetails>
                         </Accordion>

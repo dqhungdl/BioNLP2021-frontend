@@ -161,16 +161,22 @@ class Input extends React.Component {
     }
 
     getMarkdown(str) {
-        let sentences = str.split('\n');
-        for (let i = 0; i < sentences.length; i++) {
-            sentences[i] = sentences[i].trim();
-            if (sentences[i].startsWith('* ')) {
-                sentences[i] += '\n';
-                continue;
-            }
-            sentences[i] += '\\\n';
-        }
-        let formatStr = sentences.join('');
+        // let sentences = str.split('\n');
+        // for (let i = 0; i < sentences.length; i++)
+        //     sentences[i] = sentences[i].trim();
+        // while (sentences.length > 0 && sentences[sentences.length - 1].length === 0)
+        //     sentences.pop();
+        // for (let i = 1; i < sentences.length; i++) {
+        //     if (sentences[i - 1].length === 0
+        //         || sentences[i].startsWith('* ') || sentences[i - 1].startsWith('* ')
+        //         || sentences[i].startsWith('- ') || sentences[i - 1].startsWith('- ')) {
+        //         sentences[i - 1] += '\n';
+        //         continue;
+        //     }
+        //     sentences[i - 1] += '\\\n';
+        // }
+        // let formatStr = sentences.join('');
+        let formatStr = str;
         return {__html: this.markdown.render(formatStr)};
     }
 
@@ -194,7 +200,9 @@ class Input extends React.Component {
             let request = {
                 'query': this.state.keywords.join(' '),
                 'tag': this.state.keywords,
-                'doc': this.state.documents
+                'doc': this.state.documents,
+                'n_sentence': 2,
+                'using_mmr': false,
             }
             this.setState({
                 loading: true
@@ -215,6 +223,8 @@ class Input extends React.Component {
                 this.setState({
                     loading: false
                 });
+                for (let i = 0; i < request['doc'].length; i++)
+                    request['doc'][i] = await this.getMarkdown(request['doc'][i]);
                 request['multi_summ'] = await this.getMarkdown(response['data']['multi_summ']);
                 this.props.toOutput(request);
             }).catch(err => {
